@@ -1,0 +1,38 @@
+\documentclass[12pt]{article} % si tu veux faire un truc avec une mise en page type word, si tu veux faire un diaporama passe par \documentclass{beamer}
+\usepackage{ae,lmodern} % polices matricielles
+\usepackage[utf8]{inputenc} %codage et police
+\usepackage[T1]{fontenc} % prise en charge des césures
+\usepackage{geometry} % pour changer les marges du document
+\usepackage{amsmath} % pour faire des équations 
+\usepackage[french]{babel} % pour qu'il accepte les mots français, les caractères fraçais
+\usepackage{amsfonts} % polices de maths
+\usepackage{dsfont} % pour les symboles des ensembles maths N, Q, R, K...
+% \usepackage{ulem} % il sert à barrer, soouligner du texte
+\usepackage[normalem]{ulem} % le [normalem] sert à préciser que lorsque je mets \emph{sur du texte} il est en italiqeu au lieu d'être souligné si on ne met pas [normalem] alors \emph{donne du texte souligné}
+\usepackage{amssymb} % d'autres symboles de maths
+\usepackage{xcolor} % pour pouvoir changer la couleur de la police
+\usepackage{enumitem} % pour faire des listes 
+\usepackage{fancyhdr} % pour faire les en-têtes et les pieds de page
+\usepackage{lastpage} % pour avoir la dernière page
+\geometry{hmargin=3cm,vmargin=2.5cm} % je définis les marges
+\usepackage{setspace} % pour définir les interlignes 
+\author{moi-même} % l'auteur
+\date{43 ac} %la date (tu peux ne pas la mettre ça ne change rien, il la génère automatiquement)
+
+% si tu veux des détails sur les package : va sur ctan.org
+\usepackage{lipsum} % juste pour générer du texte inutile
+\pagestyle{fancy}
+\renewcommand\headrulewidth{1pt}
+\fancyhead[L]{\textbf{L'entête du test}}
+\fancyhead[R]{test}
+\fancyfoot[C]{\thepage /\pageref{LastPage}}
+\title{Le Titre du Test}
+\makeindex
+\begin{document}
+\onehalfspacing
+\maketitle
+
+J'aime bien les fichiers qui se compilent sans problème
+\newpage
+\lipsum[1-4]
+\end{document}

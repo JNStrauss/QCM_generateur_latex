@@ -22,7 +22,7 @@ file.close()
 
 TITRE = vrac[0][:-1]
 
-# Analyse de la ligne : découvrir comment maman a rentré les questions
+# Analyse de la ligne : découvrir comment ont étées rentré les questions
 i = 0
 while vrac[i][0] != 'Q' and i < len(vrac):
     i+=1

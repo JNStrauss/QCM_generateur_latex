@@ -1,3 +1,9 @@
+Le fichier main_latex_2.py génère des QCM en pdf à partir de questions en latex. Il génère un nombre fixé (par défaut 4) de QCM différents en 
+- Mélangeant l'ordre des questions
+- Mélangeant les possibilités de réponse
+- Générant le fichier pour que la correction soit aisée
+
+
 Le seul l'unique vrai beau programme est le main_latex2.py qui (est merveilleux) et génère bien tous les documents,
 
 prérequis : avoir MikTeX installé sur son ordinateur (proprement (il faut que pdflatex soit dans le PATH de l'ordinateur, mais normalement le programme d'installation le fait seul))

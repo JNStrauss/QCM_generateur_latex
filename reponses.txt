@@ -5,3 +5,4 @@ Intitulé : Corrigé de l'interrogation 5 sur les solutions aqueuses
 3. d
 4. abc
 5. abcd
+6. b

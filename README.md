@@ -15,14 +15,12 @@ il va placer les 4 QCM et la grille de réponse dans un dossier sujets
 
 
 Règles de typographie : 
-    le document questions à pour première ligne le Titre de l'interrogation 
-    les questions doivent commencer par 'Q2.' en remplaçant le 2 par le numéro que vous souhaitez (ce chiffre ne sert à rien dans le programme il n'est là que pour votre confort personnel)
-    essayer d'éviter de laisser des lignes blanches sinon mon programme va les interprèter comme des possibilités de réponses mon programme comprend les sauts de ligne simple mais s'il y a une ligne remplie de tab ou d'espaces il va l'interprèter comme une possibilité de réponse
-
-    le document réponse peut comporter le titre de l'interrogation mais mon programme s'en fiche
+    - le document questions à pour première ligne le Titre de l'interrogation 
+    - les questions doivent commencer par 'Q2.' en remplaçant le 2 par le numéro que vous souhaitez (ce chiffre ne sert à rien dans le programme il n'est là que pour votre confort personnel)
+    - essayer d'éviter de laisser des lignes blanches sinon mon programme va les interprèter comme des possibilités de réponses mon programme comprend les sauts de ligne simple mais s'il y a une ligne remplie de tab ou d'espaces il va l'interprèter comme une possibilité de réponse
+    - le document réponse peut comporter le titre de l'interrogation mais mon programme s'en fiche
     en revanche il faut que les réponses commencent par '2.' (où vous remplacez 2 par le chiffre de votre choix)
-
-    reponses.txt doit finir par un retour à la ligne
+    - reponses.txt doit finir par un retour à la ligne
 
 règles pour que tout se passe bien : il ne faut pas supprimer le dossier aux ni le dossier sujets
 

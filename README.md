@@ -3,7 +3,7 @@ Le fichier main_latex_2.py génère des QCM en pdf à partir de questions en lat
 - Mélangeant les possibilités de réponse
 - Générant le fichier pour que la correction soit aisée
 
-Les .pdf générés seront dans le dossier /sujets et tout le reste (les fichiers .txt notamment seront dans le dossier /sujet/aux)
+Les .pdf et le corrige.txt seront générés dans le dossier /sujets et tout le reste (les fichiers .txt notamment seront dans le dossier /sujet/aux)
 
 # Prérequis : 
 - avoir MikTeX installé sur son ordinateur (proprement (il faut que pdflatex soit dans le PATH de l'ordinateur, mais normalement le programme d'installation le fait seul))

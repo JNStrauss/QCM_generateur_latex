@@ -1,4 +1,4 @@
-Le fichier main_latex_2.py génère des QCM en pdf à partir de questions en latex. Il génère un nombre fixé (par défaut 4) de QCM différents en 
+Le fichier main_latex.py génère des QCM en pdf à partir de questions en latex. Il génère un nombre fixé (par défaut 4) de QCM différents en 
 - Mélangeant l'ordre des questions
 - Mélangeant les possibilités de réponse
 - Générant le fichier pour que la correction soit aisée
@@ -14,7 +14,7 @@ le plus simple est d'ouvrir son interface de développement de LaTeX favorite et
 - écrire ces QCM à la main
 
 # Règles :
-Le programme main_latex2.py va générer des questionnaires différents à partir d'une même batterie de questions initiales
+Le programme main_latex.py va générer des questionnaires différents à partir d'une même batterie de questions initiales
 il faut donc le placer dans un dossier dans lequel il y a un document 'questions.txt' et un document 'reponses.txt'
 
 

@@ -1,7 +1,9 @@
 import os
 from string import ascii_lowercase
 from random import sample, randint
-script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+script_dir = os.path.dirname(__file__)
+
+nombre_de_sujets_différents = 4
 
 latex_top = r"""\documentclass[12pt]{article} % si tu veux faire un truc avec une mise en page type word, si tu veux faire un diaporama passe par \documentclass{beamer}
 \usepackage{ae,lmodern} % polices matricielles
@@ -33,41 +35,37 @@ latex_top = r"""\documentclass[12pt]{article} % si tu veux faire un truc avec un
 \fancyfoot[C]{\thepage /\pageref{LastPage}}"""
 
 
-""" 
-Ne pas oublier de rajouter les différents éléments de la tête et de \makeindex \title \begin{document}... et ensuite on finit le truc et on est des bogosses ! 
-"""
-nombre_de_sujets_différents = 4
-
 def path(rel_path):
     return os.path.join(script_dir, rel_path)
 
+
 alphabet = ascii_lowercase
 
+
 class Question:
-    def __init__(self, intitulé, liste_questions, liste_reponses):
-        self.titre = intitulé # un string
-        self.lq = liste_questions # une liste
+    def __init__(self, intitulé:str, liste_questions:list, liste_reponses:str):
+        self.titre = intitulé
+        self.lq = liste_questions
         i = 0
         while liste_reponses[i] == ' ':
             i+=1
-        self.lr = liste_reponses[i:] # c'est un string
+        self.lr = liste_reponses[i:]
     
     def mix_answers(self):
+        """
+        Mélange les réponses pour une même question
+        """
         order = sample(list(range(len(self.lq))), len(self.lq))
         bons_num = [alphabet.index(i) for i in self.lr]
-        # print(order, bons_num, self.lq, self.lr)
         self.lq = [self.lq[i] for i in order]
         self.lr = [alphabet[order.index(i)] for i in bons_num]
         self.lr.sort()
         self.lr = ''.join(self.lr)
-        # print(self.lq, self.lr)
-        # print('')
 
 
 file = open(path('questions.txt'), 'r', encoding='UTF8')
 vrac = file.readlines()
 file.close()
-# print(vrac)
 
 TITRE = vrac[0][:-1]
 
@@ -77,7 +75,7 @@ latex_top += '\n' + r"\title{" + TITRE + r"""}
 \maketitle
 \onehalfspacing"""
 
-# Analyse de la ligne : découvrir comment maman a rentré les questions
+# Analyse de la ligne : découvrir comment les questions ont étés rentrées
 i = 0
 while vrac[i][0] != 'Q' and i < len(vrac):
     i+=1
@@ -101,22 +99,18 @@ for ligne in vrac:
         liste_possibilites.append([])
     elif ligne not in ['\n', '\n ', ' \n'] and liste_questions!=[]:
         liste_possibilites[-1].append(ligne[:-1])
-
-# print(liste_possibilites)
-
+        
 
 # On va à présent récupérer les bonnes réponses pour chaque question
 file = open(path('reponses.txt'), 'r', encoding='UTF8')
 vrac = file.readlines()
 file.close()
-# print(vrac)
 liste_bonnes_reponses = []
 for ligne in vrac:
     if ligne not in ['\n', ' \n', '\n ']:
         if ligne[1] =='.':
             liste_bonnes_reponses.append(ligne[2:-1])
 
-# print(liste_bonnes_reponses)
         
 questions = [Question(liste_questions[i], liste_possibilites[i], liste_bonnes_reponses[i]) for i in range(len(liste_questions))]
 
@@ -129,8 +123,10 @@ f.write('')
 f.close()
 
 for i in range(len(liste_qcm)):
+    # On mélange les réponses
     for quest in liste_qcm[i]:
         quest.mix_answers()
+    # on écrit le fichier .tex
     tq = latex_top + '\n' + r' \textsc{Sujet ' + str(i+1) + '}\n' + r'\begin{enumerate}' + '\n'
     tr = ''
     for qi in range(len(liste_qcm[i])):
@@ -144,9 +140,10 @@ for i in range(len(liste_qcm)):
     f.write(tq + '\n')
     f.write('\n' + r'\end{enumerate}' + '\n' + r'\end{document}')
     f.close()
+    # on compile le fichier .tex
     os.system("pdflatex -aux-directory=\"" + path(r'sujets\aux_files')+ '" -output-directory="' + path('sujets') + '" -verbose ' + path(r'sujets\aux_files' + f'\sujet{i + 1}.tex'))
+    # on remplit le fichier de correction
     f = open(path('sujets\corriges.txt'), 'a', encoding='UTF8')
-    
     f.write(f'\n \n sujet {i + 1} : \n')
     f.write(tr)
     f.close()

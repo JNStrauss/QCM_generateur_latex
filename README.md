@@ -28,7 +28,7 @@ il faut donc le placer dans un dossier dans lequel il y a un document 'questions
 
 - reponses.txt doit finir par un retour à la ligne
 
-### Problèmes réccurents :
+### Problèmes récurents :
 - il ne faut pas supprimer le dossier aux ni le dossier sujets
 
 

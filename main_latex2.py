@@ -131,7 +131,7 @@ f.close()
 for i in range(len(liste_qcm)):
     for quest in liste_qcm[i]:
         quest.mix_answers()
-    tq = latex_top + '\n' + r'\begin{enumerate}' + '\n'
+    tq = latex_top + '\n' + r' \textsc{Sujet ' + str(i+1) + '}\n' + r'\begin{enumerate}' + '\n'
     tr = ''
     for qi in range(len(liste_qcm[i])):
         tq += '\n' + r'\item ' + liste_qcm[i][qi].titre

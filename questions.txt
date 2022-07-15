@@ -18,14 +18,21 @@ Q3. $2^{10}$
 10
 1024
 
-Q4. femme blanche et femme noire
-les larmes sont des briques 
-elles enferment le coeur
-le coeur dehors
-les hommes sont des mouches
+Q4. Quels sont des vrais contes
+La princesse sur le pois
+Le vaillant soldat de plomb
+Ce qu'on peut inventer
+La petite fille du sergent-major-général-en-chef-et-en-second-aux-pied-de-bouc
 
 Q5. j'aime 
 les salades de pates
 les gratins de pates
 les pates carbo
 les pates pesto
+
+Q6. La troisième loi de Kepler :
+est également appelée loi des aires
+est \[ \frac{T^2}{a^3} = \frac{4 \pi ^2}{GM} \]
+stipule que les orbites sont elliptiques
+n'existe pas
+est aussi appelé principe d'inertie

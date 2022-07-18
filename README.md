@@ -29,7 +29,7 @@ il faut donc le placer dans un dossier dans lequel il y a un document 'questions
 - reponses.txt doit finir par un retour à la ligne
 
 ### Problèmes récurents :
-- il ne faut pas supprimer le dossier aux ni le dossier sujets
+- il ne faut pas supprimer le dossier 'aux_files' ni le dossier 'sujets'
 
 
 Pour les utilisateurs chevronés : il est bien évidemment possible de taper toutes les questions en LaTeX et de changer tous les package utilisé (en ajouter comme en enlever, j'ai mis par défaut tous ceux qui me servent habituellement mais ils sont loin d'être utiles pour faire fonctionner un générateur de QCM)

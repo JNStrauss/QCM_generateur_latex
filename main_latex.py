@@ -25,9 +25,7 @@ latex_top = r"""\documentclass[12pt]{article} % si tu veux faire un truc avec un
 \usepackage{setspace} % pour définir les interlignes 
 \author{Professeur} % l'auteur
 % \date{} %la date (tu peux ne pas la mettre ça ne change rien, il la génère automatiquement)
-
 % si tu veux des détails sur les package : va sur ctan.org
-
 \pagestyle{fancy}
 \renewcommand\headrulewidth{1pt}
 \fancyhead[L]{\textbf{Enseignement scientifique}}
@@ -94,6 +92,10 @@ k += 1
 liste_questions = []
 liste_possibilites = []
 for ligne in vrac:
+    for i_char in range(len(ligne)):
+        if ligne[i_char] == '%' and '$' not in ligne and '\[' not in ligne:
+            # si le professeur met des pourcents sans connaitre leur usage en LaTeX
+            ligne = ligne[:i_char] + "$\%$" + ligne[i_char+1:]
     if ligne[0] == 'Q':
         liste_questions.append(ligne[k:-1])
         liste_possibilites.append([])
@@ -149,4 +151,3 @@ for i in range(len(liste_qcm)):
     f.write(f'\n \n sujet {i + 1} : \n')
     f.write(tr)
     f.close()
-

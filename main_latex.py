@@ -110,6 +110,8 @@ for ligne in vrac:
     if ligne not in ['\n', ' \n', '\n ']:
         if ligne[1] =='.':
             liste_bonnes_reponses.append(ligne[2:-1])
+        elif ligne[2] == '.' and ligne[1] in [str(i) for i in range(10)]:
+            liste_bonnes_reponses.append(ligne[3:-1])
 
         
 questions = [Question(liste_questions[i], liste_possibilites[i], liste_bonnes_reponses[i]) for i in range(len(liste_questions))]
@@ -135,7 +137,7 @@ for i in range(len(liste_qcm)):
         for k in liste_qcm[i][qi].lq:
             tq += '\n' + r'\item ' + k
         tq += '\n' + r'\end{enumerate}' + '\n' + r'\vspace{0.5cm}' # le vspace est l'espace supplémentaire entre les questions
-        tr += '\n' + str(qi + 1) + liste_qcm[i][qi].lr
+        tr += '\n' + str(qi + 1) + '. ' + liste_qcm[i][qi].lr
     f = open(path(r'sujets\aux_files' + f'\sujet{i + 1}.tex'), 'w', encoding='UTF8')
     f.write(tq + '\n')
     f.write('\n' + r'\end{enumerate}' + '\n' + r'\end{document}')

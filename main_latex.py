@@ -73,10 +73,16 @@ latex_top += '\n' + r"\title{" + TITRE + r"""}
 \maketitle
 \onehalfspacing"""
 
+
 # Analyse de la ligne : découvrir comment les questions ont étés rentrées
 i = 0
 while vrac[i][0] != 'Q' and i < len(vrac):
     i+=1
+
+# on va vérifier que la dernière ligne contient bien un retour chariot
+if vrac[-1] not in ['\n', ' \n', '  \n']:
+	vrac[-1] += '\n'
+
 
 if i == len(vrac):
     raise Exception('Mauvaise typographie des questions : il faut que la ligne commence par "Q2."')
@@ -92,10 +98,14 @@ k += 1
 liste_questions = []
 liste_possibilites = []
 for ligne in vrac:
-    for i_char in range(len(ligne)):
-        if ligne[i_char] == '%' and '$' not in ligne and '\[' not in ligne:
+    i_char = 0
+    long = len(ligne)
+    while i_char < long:
+        if ligne[i_char] == '%' and '\[' not in ligne and ligne[:i_char].count('$')%2 != 1:
             # si le professeur met des pourcents sans connaitre leur usage en LaTeX
             ligne = ligne[:i_char] + "$\%$" + ligne[i_char+1:]
+            i_char += 3
+        i_char += 1
     if ligne[0] == 'Q':
         liste_questions.append(ligne[k:-1])
         liste_possibilites.append([])
@@ -106,6 +116,9 @@ for ligne in vrac:
 # On va à présent récupérer les bonnes réponses pour chaque question
 file = open(path('reponses.txt'), 'r', encoding='UTF8')
 vrac = file.readlines()
+# on va vérifier que la dernière ligne contient bien un retour chariot
+if vrac[-1] not in ['\n', ' \n', '  \n']:
+	vrac[-1] += '\n'
 file.close()
 liste_bonnes_reponses = []
 for ligne in vrac:
@@ -115,7 +128,6 @@ for ligne in vrac:
         elif ligne[2] == '.' and ligne[1] in [str(i) for i in range(10)]:
             liste_bonnes_reponses.append(ligne[3:-1])
 
-        
 questions = [Question(liste_questions[i], liste_possibilites[i], liste_bonnes_reponses[i]) for i in range(len(liste_questions))]
 
 # On va à présent générer les QCM différents de par le mélange des questions et le mélange des possibilités de réponse
@@ -151,3 +163,5 @@ for i in range(len(liste_qcm)):
     f.write(f'\n \n sujet {i + 1} : \n')
     f.write(tr)
     f.close()
+    
+    

@@ -9,9 +9,9 @@ Les .pdf et le corrige.txt seront générés dans le dossier /sujets et tout le 
 - avoir MikTeX installé sur son ordinateur (proprement (il faut que pdflatex soit dans le PATH de l'ordinateur, mais normalement le programme d'installation le fait seul))
 - avoir tous les paquets qui sont dans le programme : 
 le plus simple est d'ouvrir son interface de développement de LaTeX favorite et de compiler le fichier test.tex dans le dossier, et d'accepter dès que MikTeX propose d'installer un package. Une fois cette manip effectuée, plus rien n'est à faire, le programme est prêt à tourner. Une fois cette manip faite vous pouvez supprimer tous les fichiers dont le nom commence par 'test.' S'il n'y arrive pas vous avez trois solutions :
--- vérifier que dans miktex console --> paramètres --> installation de paquets--> demandez-moi / settings --> package installation --> ask me - est cochée et pas -jamais- 
--- ne se servir que du main_moche.py et tout copier coller dans son WYSIWYG et enregistrer tous les fichiers à la main
--- écrire ces QCM à la main
+  - vérifier que dans miktex console --> paramètres --> installation de paquets--> demandez-moi / settings --> package installation --> ask me - est cochée et pas -jamais- 
+  - ne se servir que du main_moche.py et tout copier coller dans son WYSIWYG et enregistrer tous les fichiers à la main
+  - écrire les QCM à la main
 
 # Règles :
 Le programme main_latex.py va générer des questionnaires différents à partir d'une même batterie de questions initiales

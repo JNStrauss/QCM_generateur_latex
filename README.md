@@ -26,12 +26,11 @@ il faut donc le placer dans un dossier dans lequel il y a un document 'questions
 - le document réponse peut comporter le titre de l'interrogation mais mon programme s'en fiche
 - les réponses doivent commencer par '2.' (où vous remplacez 2 par le chiffre de votre choix) mais où le . est nécessaire
 
-- reponses.txt doit finir par un retour à la ligne
-
 ### Problèmes récurents :
 - il ne faut pas supprimer le dossier 'aux_files' ni le dossier 'sujets'
+- le % en latex introduit des commentaires donc dans une formule mathématique il faut qu'il soit précédé d'un backslash \
 
 
 Pour les utilisateurs chevronés : il est bien évidemment possible de taper toutes les questions en LaTeX et de changer tous les package utilisé (en ajouter comme en enlever, j'ai mis par défaut tous ceux qui me servent habituellement mais ils sont loin d'être utiles pour faire fonctionner un générateur de QCM)
 
-Enfin s'il y a un problème dans la compilation des fichiers, n'hésitez pas à essayer de les compiler manuellement dans votre editeur de TeX favorite pour voir quelles sont les règles que vous avez enfreintes (il s'agit souvent de caractères illégaux tels que * ou µ ou °... bref... s'il y a d'autres problèmes faites tourner le fichier main_latex.py dans votre IDE préféré, où toute la verbose vous sera renvoyée. Gagnez du temps. 
+Enfin s'il y a un problème dans la compilation des fichiers, n'hésitez pas à essayer de les compiler manuellement dans votre editeur de TeX favorite pour voir quelles sont les règles que vous avez enfreintes (il s'agit souvent de caractères illégaux tels que %, * ou µ ou °... bref... s'il y a d'autres problèmes faites tourner le fichier main_latex.py dans votre IDE préféré, où toute la verbose vous sera renvoyée. Gagnez du temps. 

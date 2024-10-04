@@ -74,7 +74,7 @@ def parse_questions(vrac: list[str]) -> tuple[list[str], list[list[str]]]:
         i += 1
 
     if i == len(vrac):
-        raise Exception('Mauvaise typographie des questions : il faut que la ligne commence par "Q2."')
+        raise Exception('Bad question typography: the line must start with "Q2."')
 
     k = vrac[i].index('.') + 1
     questions = []
@@ -92,15 +92,34 @@ def parse_questions(vrac: list[str]) -> tuple[list[str], list[list[str]]]:
     return questions, choices
 
 
+# Regex pattern to match relative \includegraphics (with or without options)
+INCLUDE_PATTERN = r'\\includegraphics(?:\[(.*?)\])?\{([^:/].*?)\}'
+
+
+def transform_include_path(match: re.Match) -> str:
+    options = match.group(1) if match.group(1) else ''
+    relative_path = match.group(2)
+    new_path = f'../../{relative_path}'
+    if options:
+        return f'\\includegraphics[{options}]{{{new_path}}}'
+    return f'\\includegraphics{{{new_path}}}'
+
+
+def transform_image_includes(latex_content: str) -> str:
+    return re.sub(INCLUDE_PATTERN, transform_include_path, latex_content)
+
+
 def generate_qcm(questions: list[Question], num_subjects: int) -> list[list[Question]]:
     return [sample(questions, len(questions)) for _ in range(num_subjects)]
 
 
-def clean(output_dir: str) -> None:
+def clean() -> None:
+    base_path = os.path.dirname(__file__)
+    full_output_dir = os.path.join(base_path, 'sujets')
     extensions = ['.tex', '.log', '.aux', '.out']
-    aux_files_dir = os.path.join(output_dir, 'aux_files')
+    aux_files_dir = os.path.join(full_output_dir, 'aux_files')
 
-    for root, _, files in os.walk(output_dir):
+    for root, _, files in os.walk(full_output_dir):
         for file in files:
             if any(file.endswith(ext) for ext in extensions):
                 os.remove(os.path.join(root, file))
@@ -132,6 +151,8 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
             for k in question.possible_answers:
                 tq += f'\n\\item {k}'
             tq += '\n\\end{enumerate}\n\\vspace{0.5cm}'
+
+        tq = transform_image_includes(tq)
 
         sujet_path = path(f'sujets/aux_files/sujet{i + 1}.tex')
         write_file(sujet_path, tq + '\n\\end{enumerate}\n\\end{document}')
@@ -195,7 +216,7 @@ def main() -> None:
 
     create_latex_files(liste_qcm, latex_top_with_title)
 
-    clean('sujets')
+    clean()
 
 
 if __name__ == '__main__':

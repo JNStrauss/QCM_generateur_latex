@@ -11,6 +11,7 @@ This project automatically generates multiple-choice questionnaires (QCM) in LaT
 - Generates multiple versions of QCM from a question file.
 - Shuffles questions and answers for each version.
 - Automatically creates PDF files using `pdflatex`.
+- Supports basic latex syntax for questions
 
 ## Prerequisites
 

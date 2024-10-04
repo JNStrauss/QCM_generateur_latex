@@ -11,6 +11,7 @@ python = "^3.12"
 mypy = "^1.11.2"
 ruff = "^0.6.9"
 black = "^24.8.0"
+pytest = "^8.3.3"
 
 
 [build-system]
@@ -74,6 +75,9 @@ select = [
 "__init__.py" = [
     "F401", # Module imported but unused
     "F403", # 'from module import *' used; unable to detect undefined names
+]
+"**/tests/*" = [
+    "INP001", # is part of an implicit namespace package, missing __init__.py
 ]
 
 [tool.ruff.lint.pydocstyle]

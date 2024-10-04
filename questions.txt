@@ -1,39 +1,15 @@
-Interrogation 5 sur les solutions aqueuses
+QCM Title
+Author
+School
+Course
+Date
 
+Q1. First question?
+Answer A
+Answer B
+Answer C
 
-Q1. quels sont les bonnes réponses
-vrai
-faux
-presque
-rien
-
-Q2. pourquoi est-ce que 
-pourquoi pas $\mu_r + 4^3$
-j'aime les frites
-le soleil
-la lune
-
-Q3. $2^{10}$ %
-1
-2
-10
-1024
-
-Q4. Quels sont des vrais contes
-La princesse sur le pois
-Le vaillant soldat de plomb
-Ce qu'on peut inventer
-La petite fille du sergent-major-général-en-chef-et-en-second-aux-pied-de-bouc
-
-Q5. j'aime 
-les salades de pates
-les gratins de pates
-les pates carbo
-les pates pesto
-
-Q6. La troisième loi de Kepler :
-est également appelée loi des aires
-est \[ \frac{T^2}{a^3} = \frac{4 \pi ^2}{GM} \]
-stipule que les orbites sont elliptiques
-n'existe pas
-est aussi appelé principe d'inertie
+Q2. Second question?
+Answer A
+Answer B
+Answer C

@@ -38,14 +38,14 @@ cd latex_QCM_generator
     Date
 
     Q1. First question?
-    a. Answer A
-    b. Answer B
-    c. Answer C
+    Answer A
+    Answer B
+    Answer C
 
     Q2. Second question?
-    a. Answer A
-    b. Answer B
-    c. Answer C
+    Answer A
+    Answer B
+    Answer C
     ```
 
 2. Run the Python script:

@@ -3,7 +3,6 @@ import os
 import re
 import subprocess
 from random import sample
-from string import ascii_lowercase
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -40,8 +39,6 @@ latex_top = r"""
 \maketitle
 \onehalfspacing
 """
-
-alphabet = ascii_lowercase
 
 
 class Question:

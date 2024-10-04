@@ -1,36 +1,43 @@
-Le fichier main_latex.py génère des QCM en pdf à partir de questions en latex. Il génère un nombre fixé (par défaut 4) de QCM différents en 
-- Mélangeant l'ordre des questions
-- Mélangeant les possibilités de réponse
-- Générant le fichier pour que la correction soit aisée
+# QCM Generator
 
-Les .pdf et le corrige.txt seront générés dans le dossier /sujets et tout le reste (les fichiers .txt notamment seront dans le dossier /sujet/aux)
+## Features
 
-# Prérequis : 
-- avoir MikTeX installé sur son ordinateur (proprement (il faut que pdflatex soit dans le PATH de l'ordinateur, mais normalement le programme d'installation le fait seul))
-- avoir tous les paquets qui sont dans le programme : 
-le plus simple est d'ouvrir son interface de développement de LaTeX favorite et de compiler le fichier test.tex dans le dossier, et d'accepter dès que MikTeX propose d'installer un package. Une fois cette manip effectuée, plus rien n'est à faire, le programme est prêt à tourner. Une fois cette manip faite vous pouvez supprimer tous les fichiers dont le nom commence par 'test.' S'il n'y arrive pas vous avez trois solutions :
-  - vérifier que dans miktex console --> paramètres --> installation de paquets--> demandez-moi / settings --> package installation --> ask me - est cochée et pas -jamais- 
-  - ne se servir que du main_moche.py et tout copier coller dans son WYSIWYG et enregistrer tous les fichiers à la main
-  - écrire les QCM à la main
+- Randomizes the order of questions
+- Randomizes the answer choices
+- Generates files for easy correction
 
-# Règles :
-Le programme main_latex.py va générer des questionnaires différents à partir d'une même batterie de questions initiales
-il faut donc le placer dans un dossier dans lequel il y a un document 'questions.txt' et un document 'reponses.txt'
+The `.pdf` and `corrige.txt` files will be generated in the `/sujets` folder, while other files (notably `.txt` files) will be in the `/sujet/aux` folder.
 
+## Prerequisites
 
-## Règles typographiques : 
-- le document questions.txt à pour première ligne le Titre de l'interrogation 
-- les questions doivent commencer par 'Q2.' en remplaçant le 2 par le numéro que vous souhaitez (ce chiffre ne sert à rien dans le programme il n'est là que pour votre confort personnel) et le . est nécessaire pour que le programme identifie le début d'une question.
-- essayer d'éviter de laisser des lignes blanches sinon mon programme va les interprèter comme des possibilités de réponses (le programme comprend les sauts de ligne simple mais s'il y a une ligne remplie de tab ou d'espaces il va l'interprèter comme une possibilité de réponse)
+- Install MikTeX on your computer (ensure `pdflatex` is in the PATH, the installer usually handles this).
+- Ensure all required packages are installed:
+  - The simplest way is to open your favorite LaTeX development interface, compile the `test.tex` file in the folder, and accept any package installation prompts from MikTeX. Once done, the program is ready to run. You can then delete all files starting with `test.` If this doesn't work, you have three options:
+    - Check that in MikTeX Console: `Settings` -> `Package Installation` -> `Ask me` is selected, not `Never`.
+    - Use `main_moche.py` and manually copy-paste into your WYSIWYG editor, saving all files manually.
+    - Write the QCM manually.
 
-- le document réponse peut comporter le titre de l'interrogation mais mon programme s'en fiche
-- les réponses doivent commencer par '2.' (où vous remplacez 2 par le chiffre de votre choix) mais où le . est nécessaire
+## Rules
 
-### Problèmes récurents :
-- il ne faut pas supprimer le dossier 'aux_files' ni le dossier 'sujets'
-- le % en latex introduit des commentaires donc dans une formule mathématique il faut qu'il soit précédé d'un backslash \
+The `main_latex.py` program generates different questionnaires from an initial set of questions. Place it in a folder containing `questions.txt` and `reponses.txt`.
 
+### Typographic Rules
 
-Pour les utilisateurs chevronés : il est bien évidemment possible de taper toutes les questions en LaTeX et de changer tous les package utilisé (en ajouter comme en enlever, j'ai mis par défaut tous ceux qui me servent habituellement mais ils sont loin d'être utiles pour faire fonctionner un générateur de QCM)
+- The first line of `questions.txt` should be the title of the quiz.
+- Questions should start with `Q2.` (replace `2` with your desired number; this number is for your convenience and does not affect the program). The `.` is necessary to identify the start of a question.
+- Avoid leaving blank lines, as the program will interpret them as possible answers. Single line breaks are understood, but lines filled with tabs or spaces will be interpreted as answer choices.
 
-Enfin s'il y a un problème dans la compilation des fichiers, n'hésitez pas à essayer de les compiler manuellement dans votre editeur de TeX favorite pour voir quelles sont les règles que vous avez enfreintes (il s'agit souvent de caractères illégaux tels que %, * ou µ ou °... bref... s'il y a d'autres problèmes faites tourner le fichier main_latex.py dans votre IDE préféré, où toute la verbose vous sera renvoyée. Gagnez du temps. 
+- The `reponses.txt` file can include the quiz title, but the program ignores it.
+- Answers should start with `2.` (replace `2` with your desired number), and the `.` is necessary.
+
+### Common Issues
+
+- Do not delete the `aux_files` or `sujets` folders.
+- In LaTeX, `%` introduces comments, so in a mathematical formula, it must be preceded by a backslash `\`.
+
+### Advanced Users
+
+You can type all questions in LaTeX and modify the packages used (add or remove as needed). The default packages are those I commonly use but are not essential for the QCM generator.
+
+If there are compilation issues, try compiling the files manually in your favorite TeX editor to identify rule violations (often illegal characters like `%`, `*`, `µ`, `°`, etc.). If other issues arise, run `main_latex.py` in your preferred IDE to get verbose output and save time.
+

@@ -1,0 +1,27 @@
+{
+  // Python settings
+  "mypy.runUsingActiveInterpreter": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.defaultInterpreterPath": "./.venv/bin/python",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.rulers": [80, 120]
+  },
+  "ruff.lint.args": ["--config=pyproject.toml"],
+  "black-formatter.args": [
+    "--skip-string-normalization",
+    "--line-length",
+    "120"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.ignore": ["*"],
+  "mypy-type-checker.ignorePatterns": [
+    ".venv/**",
+  ],
+  "python.languageServer": "Jedi",
+}

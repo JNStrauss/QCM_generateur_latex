@@ -160,28 +160,31 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
 def main() -> None:
     vrac_questions = read_file(path('questions.txt'))
 
-    title = 'Default Title'
-    author = 'Default Author'
-    school = 'Default School'
-    course = 'Default Subtitle'
-    date = 'Default Date'
+    title = 'QCM'
+    author = ''
+    school = ''
+    course = ''
+    date = ''
 
-    try:
-        for i, line in enumerate(vrac_questions):
-            if not line.strip():
-                break
-            if i == 0:
-                title = line.strip()
-            elif i == 1:
-                author = line.strip()
-            elif i == 2:
-                school = line.strip()
-            elif i == 3:
-                course = line.strip()
-            elif i == 4:
-                date = line.strip()
-    except IndexError:
+    for i, line in enumerate(vrac_questions):
+        if not line.strip():
+            break
+        if i == 0:
+            title = line.strip()
+        elif i == 1:
+            author = line.strip()
+        elif i == 2:
+            school = line.strip()
+        elif i == 3:
+            course = line.strip()
+        elif i == 4:
+            date = line.strip()
+
+    head_lines = len({title, author, school, course, date})
+    if date == '':
         logging.warning('Title, author, school, course, or date information is missing in questions.txt')
+
+    vrac_questions = vrac_questions[head_lines:]
 
     latex_top_with_title = latex_top.format(title=title, author=author, subject=course, school=school, date=date)
 

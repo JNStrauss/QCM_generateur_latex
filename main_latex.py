@@ -1,65 +1,77 @@
-import os
-from string import ascii_lowercase
-from random import sample
 import logging
+import os
+import re
+import subprocess
+from random import sample
+from string import ascii_lowercase
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 script_dir = os.path.dirname(__file__)
-nombre_de_sujets_différents = 4
+nb_different_subjects = 4
 
 latex_top = r"""
-\documentclass[12pt]{article}
-\usepackage{ae,lmodern}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{geometry}
-\usepackage{amsmath}
-\usepackage[french]{babel}
-\usepackage{amsfonts}
-\usepackage{dsfont}
-\usepackage[normalem]{ulem}
-\usepackage{amssymb}
-\usepackage{xcolor}
-\usepackage{enumitem}
-\usepackage{fancyhdr}
-\usepackage{lastpage}
-\geometry{hmargin=3cm,vmargin=2.5cm}
-\usepackage{setspace}
-\author{Professeur}
-\pagestyle{fancy}
-\renewcommand\headrulewidth{1pt}
-\fancyhead[L]{\textbf{Enseignement scientifique}}
-\fancyhead[R]{Lycée}
-\fancyfoot[C]{\thepage /\pageref{LastPage}}
+\documentclass[12pt]{{article}}
+\usepackage{{ae,lmodern}}
+\usepackage[utf8]{{inputenc}}
+\usepackage[T1]{{fontenc}}
+\usepackage{{geometry}}
+\usepackage{{amsmath}}
+\usepackage[french]{{babel}}
+\usepackage{{amsfonts}}
+\usepackage{{dsfont}}
+\usepackage[normalem]{{ulem}}
+\usepackage{{amssymb}}
+\usepackage{{xcolor}}
+\usepackage{{enumitem}}
+\usepackage{{fancyhdr}}
+\usepackage{{lastpage}}
+\geometry{{hmargin=3cm,vmargin=2.5cm}}
+\usepackage{{setspace}}
+\author{{{author}}}
+\pagestyle{{fancy}}
+\renewcommand\headrulewidth{{1pt}}
+\fancyhead[L]{{\textbf{{{subject}}}}}
+\fancyhead[R]{{{school}}}
+\fancyfoot[C]{{\thepage /\pageref{{LastPage}}}}
+\title{{{title}}}
+\date{{{date}}}
+\begin{{document}}
+\maketitle
+\onehalfspacing
 """
 
 alphabet = ascii_lowercase
 
+
 class Question:
-    def __init__(self, intitulé: str, liste_questions: list, liste_reponses: str):
-        self.titre = intitulé
-        self.lq = liste_questions
-        self.lr = liste_reponses.strip()
+    possible_answers: list[str]
+    question: str
 
-    def mix_answers(self):
-        order = sample(list(range(len(self.lq))), len(self.lq))
-        bons_num = [alphabet.index(i) for i in self.lr]
-        self.lq = [self.lq[i] for i in order]
-        self.lr = ''.join(sorted(alphabet[order.index(i)] for i in bons_num))
+    def __init__(self, title: str, possible_answers: list[str]):
+        self.question = title
+        self.possible_answers = possible_answers
 
-def path(rel_path):
+    def mix_answers(self) -> None:
+        order = sample(list(range(len(self.possible_answers))), len(self.possible_answers))
+        self.possible_answers = [self.possible_answers[i] for i in order]
+
+
+def path(rel_path: str) -> str:
     return os.path.join(script_dir, rel_path)
 
-def read_file(file_path):
+
+def read_file(file_path: str) -> list[str]:
     with open(file_path, 'r', encoding='UTF8') as file:
         return file.readlines()
 
-def write_file(file_path, content):
+
+def write_file(file_path: str, content: str) -> None:
     with open(file_path, 'w', encoding='UTF8') as file:
         file.write(content)
 
-def parse_questions(vrac):
+
+def parse_questions(vrac: list[str]) -> tuple[list[str], list[list[str]]]:
     i = 0
     while vrac[i][0] != 'Q' and i < len(vrac):
         i += 1
@@ -68,68 +80,85 @@ def parse_questions(vrac):
         raise Exception('Mauvaise typographie des questions : il faut que la ligne commence par "Q2."')
 
     k = vrac[i].index('.') + 1
-    liste_questions = []
-    liste_possibilites = []
+    questions = []
+    choices: list[list[str]] = []
 
-    for ligne in vrac:
-        ligne = ligne.replace('%', r'$\%$')
-        if ligne.startswith('Q'):
-            liste_questions.append(ligne[k:].strip())
-            liste_possibilites.append([])
-        elif ligne.strip() and liste_questions:
-            liste_possibilites[-1].append(ligne.strip())
+    vrac = [re.sub(r'(?<!\\)%', r'\%', line) for line in vrac]
 
-    return liste_questions, liste_possibilites
+    for line in vrac:
+        if line.startswith('Q'):
+            questions.append(line[k:].strip())
+            choices.append([])
+        elif line.strip() and questions:
+            choices[-1].append(line.strip())
 
-def parse_reponses(vrac):
-    liste_bonnes_reponses = []
-    for ligne in vrac:
-        ligne = ligne.strip()
-        if ligne and (ligne[1] == '.' or (ligne[2] == '.' and ligne[1].isdigit())):
-            liste_bonnes_reponses.append(ligne.split('.', 1)[1].strip())
-    return liste_bonnes_reponses
+    return questions, choices
 
-def generate_qcm(questions, nombre_de_sujets_différents):
-    return [sample(questions, len(questions)) for _ in range(nombre_de_sujets_différents)]
 
-def create_latex_files(liste_qcm, latex_top):
+def generate_qcm(questions: list[Question], num_subjects: int) -> list[list[Question]]:
+    return [sample(questions, len(questions)) for _ in range(num_subjects)]
+
+
+def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
+    aux_dir = path('sujets/aux_files')
+    output_dir = path('sujets')
+
+    os.makedirs(aux_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
+
     for i, qcm in enumerate(liste_qcm):
         for quest in qcm:
             quest.mix_answers()
 
-        tq = f"{latex_top}\n\\textsc{{Sujet {i + 1}}}\n\\begin{{enumerate}}\n"
-        tr = ''
+        tq = f'{latex_top}\n\\textsc{{Sujet {i + 1}}}\n\\begin{{enumerate}}\n'
 
-        for qi, question in enumerate(qcm):
-            tq += f"\n\\item {question.titre}\n\\begin{{enumerate}}"
-            for k in question.lq:
-                tq += f"\n\\item {k}"
-            tq += "\n\\end{enumerate}\n\\vspace{0.5cm}"
-            tr += f"\n{qi + 1}. {question.lr}"
+        for question in qcm:
+            tq += f'\n\\item {question.question}\n\\begin{{enumerate}}'
+            for k in question.possible_answers:
+                tq += f'\n\\item {k}'
+            tq += '\n\\end{enumerate}\n\\vspace{0.5cm}'
 
         sujet_path = path(f'sujets/aux_files/sujet{i + 1}.tex')
         write_file(sujet_path, tq + '\n\\end{enumerate}\n\\end{document}')
 
-        os.system(f"pdflatex -aux-directory=\"{path('sujets/aux_files')}\" -output-directory=\"{path('sujets')}\" -verbose {sujet_path}")
+        subprocess.run(  # noqa: S603
+            [  # noqa: S607
+                'pdflatex',
+                f'-aux-directory={aux_dir}',
+                f'-output-directory={output_dir}',
+                '-verbose',
+                sujet_path,
+            ],
+            check=True,
+        )
 
-        with open(path('sujets/corriges.txt'), 'a', encoding='UTF8') as f:
-            f.write(f'\n\nsujet {i + 1} : \n{tr}')
 
-def main():
+def main() -> None:
     vrac_questions = read_file(path('questions.txt'))
-    vrac_reponses = read_file(path('reponses.txt'))
 
-    TITRE = vrac_questions[0].strip()
-    latex_top_with_title = latex_top + f'\n\\title{{{TITRE}}}\n\\makeindex\n\\begin{{document}}\n\\maketitle\n\\onehalfspacing'
+    try:
+        title = vrac_questions[0].strip()
+        author = vrac_questions[1].strip()
+        school = vrac_questions[2].strip()
+        course = vrac_questions[3].strip()
+        date = vrac_questions[4].strip()
+    except IndexError:
+        logging.warning('Title, author, school, course, or date information is missing in questions.txt')
+        title = 'Default Title'
+        author = 'Default Author'
+        course = 'Default Subtitle'
+        school = 'Default School'
+        date = 'Default Date'
+
+    latex_top_with_title = latex_top.format(title=title, author=author, subject=course, school=school, date=date)
 
     liste_questions, liste_possibilites = parse_questions(vrac_questions)
-    liste_bonnes_reponses = parse_reponses(vrac_reponses)
 
-    questions = [Question(liste_questions[i], liste_possibilites[i], liste_bonnes_reponses[i]) for i in range(len(liste_questions))]
-    liste_qcm = generate_qcm(questions, nombre_de_sujets_différents)
+    questions = [Question(liste_questions[i], liste_possibilites[i]) for i in range(len(liste_questions))]
+    liste_qcm = generate_qcm(questions, nb_different_subjects)
 
-    write_file(path('sujets/corriges.txt'), '')
     create_latex_files(liste_qcm, latex_top_with_title)
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     main()

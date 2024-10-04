@@ -23,5 +23,5 @@
   "mypy-type-checker.ignorePatterns": [
     ".venv/**",
   ],
-  "python.languageServer": "Jedi",
+  "python.languageServer": "Pylance",
 }

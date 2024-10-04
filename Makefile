@@ -1,6 +1,6 @@
 all: run
 
-OUTPUT_DIR = sujets
+OUTPUT_DIR = app/sujets
 
 run:
 	python app/main_latex.py

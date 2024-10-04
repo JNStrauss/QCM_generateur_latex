@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "qcm-generator"
+version = "0.1.0"
+description = "Python app to generate LaTeX multiple choice questions from text questions"
+authors = ["toby-bro <toby.bro@pm.me>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

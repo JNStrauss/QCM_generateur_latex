@@ -3,7 +3,6 @@ from string import ascii_lowercase
 from random import sample
 import logging
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 script_dir = os.path.dirname(__file__)

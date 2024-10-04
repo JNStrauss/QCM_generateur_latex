@@ -99,6 +99,24 @@ def generate_qcm(questions: list[Question], num_subjects: int) -> list[list[Ques
     return [sample(questions, len(questions)) for _ in range(num_subjects)]
 
 
+def clean(output_dir: str) -> None:
+    extensions = ['.tex', '.log', '.aux', '.out']
+    aux_files_dir = os.path.join(output_dir, 'aux_files')
+
+    for root, _, files in os.walk(output_dir):
+        for file in files:
+            if any(file.endswith(ext) for ext in extensions):
+                os.remove(os.path.join(root, file))
+
+    if os.path.isdir(aux_files_dir):
+        for root, dirs, files in os.walk(aux_files_dir, topdown=False):
+            for file in files:
+                os.remove(os.path.join(root, file))
+            for dir in dirs:
+                os.rmdir(os.path.join(root, dir))
+        os.rmdir(aux_files_dir)
+
+
 def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
     aux_dir = path('sujets/aux_files')
     output_dir = path('sujets')
@@ -121,34 +139,52 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
         sujet_path = path(f'sujets/aux_files/sujet{i + 1}.tex')
         write_file(sujet_path, tq + '\n\\end{enumerate}\n\\end{document}')
 
-        subprocess.run(  # noqa: S603
+        result = subprocess.run(  # noqa: S603
             [  # noqa: S607
                 'pdflatex',
-                f'-aux-directory={aux_dir}',
+                '-interaction=nonstopmode',
                 f'-output-directory={output_dir}',
-                '-verbose',
                 sujet_path,
             ],
-            check=True,
+            capture_output=True,
+            check=False,
         )
+
+        if result.returncode != 0:
+            logging.error(result.stdout)
+            return
+
+        if result.stdout:
+            logging.debug(result.stdout)
+        if result.stderr:
+            logging.error(result.stderr)
 
 
 def main() -> None:
     vrac_questions = read_file(path('questions.txt'))
 
+    title = 'Default Title'
+    author = 'Default Author'
+    school = 'Default School'
+    course = 'Default Subtitle'
+    date = 'Default Date'
+
     try:
-        title = vrac_questions[0].strip()
-        author = vrac_questions[1].strip()
-        school = vrac_questions[2].strip()
-        course = vrac_questions[3].strip()
-        date = vrac_questions[4].strip()
+        for i, line in enumerate(vrac_questions):
+            if not line.strip():
+                break
+            if i == 0:
+                title = line.strip()
+            elif i == 1:
+                author = line.strip()
+            elif i == 2:
+                school = line.strip()
+            elif i == 3:
+                course = line.strip()
+            elif i == 4:
+                date = line.strip()
     except IndexError:
         logging.warning('Title, author, school, course, or date information is missing in questions.txt')
-        title = 'Default Title'
-        author = 'Default Author'
-        course = 'Default Subtitle'
-        school = 'Default School'
-        date = 'Default Date'
 
     latex_top_with_title = latex_top.format(title=title, author=author, subject=course, school=school, date=date)
 
@@ -158,6 +194,8 @@ def main() -> None:
     liste_qcm = generate_qcm(questions, nb_different_subjects)
 
     create_latex_files(liste_qcm, latex_top_with_title)
+
+    clean('sujets')
 
 
 if __name__ == '__main__':

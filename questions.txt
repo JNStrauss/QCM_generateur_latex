@@ -1,5 +1,6 @@
 Interrogation 5 sur les solutions aqueuses
 
+
 Q1. quels sont les bonnes réponses
 vrai
 faux
@@ -12,7 +13,7 @@ j'aime les frites
 le soleil
 la lune
 
-Q3. $2^{10}$
+Q3. $2^{10}$ %
 1
 2
 10

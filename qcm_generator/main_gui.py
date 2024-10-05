@@ -1,5 +1,6 @@
 import os
 import platform
+import re
 import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
@@ -7,6 +8,69 @@ from tkinter import filedialog, messagebox, scrolledtext
 from qcm_generator.main_cli import generate_subjects
 
 QUESTION_FILE = os.path.join(os.path.dirname(__file__), 'questions.txt')
+
+
+def load_style(editor: tk.Text) -> None:
+    # Set default styles
+    editor.tag_configure('default', foreground='black', background='white')
+    editor.configure(bg='white', fg='black')
+
+    # Set styles for specific use cases
+    editor.tag_configure('math', foreground='blue')
+    editor.tag_configure('invalid', foreground='red')
+    editor.tag_configure('bold', font=('Monospace', 10, 'bold'))
+
+
+def check_markdown(editor: tk.Text) -> None:
+    start = '1.0'
+    end = 'end'
+    data = editor.get(start, end)
+
+    # Clear existing tags
+    editor.tag_remove('math', start, end)
+    editor.tag_remove('bold', start, end)
+
+    # Apply bold tag for lines starting with "Q"
+    for line in data.splitlines():
+        if line.startswith('Q'):
+            line_start_index = editor.index(f'{data.splitlines().index(line)}.0')
+
+            line_end_index = editor.index(f'{line_start_index} + {len(line) + 2}c')
+
+            editor.tag_add('bold', line_start_index, line_end_index)
+
+    # Regex patterns for math mode
+    dollar_pattern = r'\$(.*?)\$'  # Matches $...$
+    bracket_pattern = r'\\\[(.*?)\\\]'  # Matches \[...\]
+
+    # Combine patterns to find all matches
+    combined_pattern = f'({dollar_pattern}|{bracket_pattern})'
+
+    for match in re.finditer(combined_pattern, data):
+        start_index = editor.index(f'1.0 + {match.start()}c')
+        end_index = editor.index(f'1.0 + {match.end()}c')
+        editor.tag_add('math', start_index, end_index)
+
+    # Check for invalid patterns: unmatched $ or \[
+    invalid_dollar_pattern = r'\$[^$]*(?![^$]*\$)'  # Matches a $ without a closing $
+    invalid_bracket_pattern = r'\\\[[^\\\]]*(?![^\\\]]*\\\])'  # Matches \[ without a closing \]
+
+    # Find and tag invalid patterns
+    for match in re.finditer(invalid_dollar_pattern, data):
+        start_index = editor.index(f'1.0 + {match.start()}c')
+        end_index = editor.index(f'1.0 + {match.end()}c')
+        editor.tag_add('invalid', start_index, end_index)
+
+    for match in re.finditer(invalid_bracket_pattern, data):
+        start_index = editor.index(f'1.0 + {match.start()}c')
+        end_index = editor.index(f'1.0 + {match.end()}c')
+        editor.tag_add('invalid', start_index, end_index)
+
+    # Remove invalid tags where math tags exist
+    for match in re.finditer(combined_pattern, data):
+        start_index = editor.index(f'1.0 + {match.start()}c')
+        end_index = editor.index(f'1.0 + {match.end()}c')
+        editor.tag_remove('invalid', start_index, end_index)
 
 
 class QCMGeneratorIDE:
@@ -70,7 +134,21 @@ class QCMGeneratorIDE:
         self.load_questions(
             QUESTION_FILE,
             is_user_triggered=False,
-        )  # Load the questions file by default
+        )
+
+        # Set up Pygments
+        load_style(self.text_area)
+        check_markdown(self.text_area)
+
+        # Bind key release to the markdown checker function
+        self.text_area.bind(
+            '<KeyRelease>',
+            lambda _: check_markdown(self.text_area),
+        )
+
+        # Define tags for syntax coloring
+        self.text_area.tag_configure('maths', foreground='blue')
+        self.text_area.tag_configure('question', font=('Helvetica', 10, 'bold'))
 
     def reset_questions(self) -> None:
         reload_questions()

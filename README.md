@@ -15,10 +15,26 @@ This project automatically generates multiple-choice questionnaires (QCM) in LaT
 
 ## Prerequisites
 
-- [Python 3.6+](https://www.python.org/downloads/)
+- [Python 3.8+](https://www.python.org/downloads/)
 - [LaTeX](https://www.latex-project.org/get/)
 
 ## Installation
+
+### Just for subjects generation
+
+You might need to change this line
+
+```py
+from qcm_generator.main_cli import generate_subjects
+```
+
+to
+
+```py
+from main_cli import generate_subjects
+```
+
+### For development
 
 Clone the repository and install the required dependencies:
 

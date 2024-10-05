@@ -7,7 +7,7 @@ from random import sample
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 script_dir = os.path.dirname(__file__)
-nb_different_subjects = 4
+num_different_subjects = 4
 
 latex_top = r"""
 \documentclass[12pt]{{article}}
@@ -68,21 +68,21 @@ def write_file(file_path: str, content: str) -> None:
         file.write(content)
 
 
-def parse_questions(vrac: list[str]) -> tuple[list[str], list[list[str]]]:
+def parse_questions(raw_lines: list[str]) -> tuple[list[str], list[list[str]]]:
     i = 0
-    while vrac[i][0] != 'Q' and i < len(vrac):
+    while raw_lines[i][0] != 'Q' and i < len(raw_lines):
         i += 1
 
-    if i == len(vrac):
+    if i == len(raw_lines):
         raise Exception('Bad question typography: the line must start with "Q2."')
 
-    k = vrac[i].index('.') + 1
+    k = raw_lines[i].index('.') + 1
     questions = []
     choices: list[list[str]] = []
 
-    vrac = [re.sub(r'(?<!\\)%', r'\%', line) for line in vrac]
+    raw_lines = [re.sub(r'(?<!\\)%', r'\%', line) for line in raw_lines]
 
-    for line in vrac:
+    for line in raw_lines:
         if line.startswith('Q'):
             questions.append(line[k:].strip())
             choices.append([])
@@ -179,7 +179,7 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
 
 
 def main() -> None:
-    vrac_questions = read_file(path('questions.txt'))
+    raw_questions = read_file(path('questions.txt'))
 
     title = 'QCM'
     author = ''
@@ -187,7 +187,7 @@ def main() -> None:
     course = ''
     date = ''
 
-    for i, line in enumerate(vrac_questions):
+    for i, line in enumerate(raw_questions):
         if not line.strip():
             break
         if i == 0:
@@ -205,16 +205,16 @@ def main() -> None:
     if date == '':
         logging.warning('Title, author, school, course, or date information is missing in questions.txt')
 
-    vrac_questions = vrac_questions[head_lines:]
+    raw_questions = raw_questions[head_lines:]
 
-    latex_top_with_title = latex_top.format(title=title, author=author, subject=course, school=school, date=date)
+    formatted_title_header = latex_top.format(title=title, author=author, subject=course, school=school, date=date)
 
-    liste_questions, liste_possibilites = parse_questions(vrac_questions)
+    question_list, possible_choices = parse_questions(raw_questions)
 
-    questions = [Question(liste_questions[i], liste_possibilites[i]) for i in range(len(liste_questions))]
-    liste_qcm = generate_qcm(questions, nb_different_subjects)
+    questions = [Question(question_list[i], possible_choices[i]) for i in range(len(question_list))]
+    liste_qcm = generate_qcm(questions, num_different_subjects)
 
-    create_latex_files(liste_qcm, latex_top_with_title)
+    create_latex_files(liste_qcm, formatted_title_header)
 
     clean()
 

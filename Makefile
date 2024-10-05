@@ -12,5 +12,13 @@ clean:
 purge:
 	rm -rf $(OUTPUT_DIR)
 
+test:
+	poetry run pytest
 
-.PHONY: all run clean purge
+check: test
+	poetry run ruff check $(BASE_DIR)
+	poetry run mypy $(BASE_DIR)
+	poetry run black $(BASE_DIR)
+
+
+.PHONY: all run clean purge test check

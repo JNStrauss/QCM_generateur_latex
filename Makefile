@@ -17,10 +17,18 @@ purge: clean
 test:
 	poetry run pytest
 
-check: test
+lint:
 	poetry run ruff check $(BASE_DIR)
-	poetry run mypy $(BASE_DIR)
 	poetry run black $(BASE_DIR)
 
+types:
+	poetry run mypy $(BASE_DIR)
 
-.PHONY: all run clean purge test check
+check: test lint types
+
+install:
+	poetry lock
+	poetry install
+	pre-commit install
+
+.PHONY: all run clean purge test check lint types install

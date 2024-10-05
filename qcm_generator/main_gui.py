@@ -1,4 +1,6 @@
 import os
+import platform
+import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 
@@ -58,6 +60,13 @@ class QCMGeneratorIDE:
         )
         self.generate_subjects_btn.pack(pady=5)
 
+        self.open_subjects_folder_btn: tk.Button = tk.Button(
+            self.button_frame,
+            text='Open Subjects Folder',
+            command=self.open_subjects_folder,
+        )
+        self.open_subjects_folder_btn.pack(pady=5)
+
         self.load_questions(
             QUESTION_FILE,
             is_user_triggered=False,
@@ -83,6 +92,12 @@ class QCMGeneratorIDE:
             "Click 'Generate Subjects' to create QCM documents from the loaded questions.\n\n"
             "Including Images:\n"
             "Use 'Include Image' to insert images into your LaTeX documents. You will be prompted to select an image file.\n\n"  # noqa: E501
+            "If in doubt, this is the default header for the questions file:\n"
+            "QCM Title\n"
+            "Author\n"
+            "School\n"
+            "Course\n"
+            "Date\n\n"
             "Contact:\n"
             "For assistance, please reach out by creating an issue on the GitHub repository: \n"
             "https://github.com/toby-bro/latex_QCM_generator"
@@ -91,7 +106,7 @@ class QCMGeneratorIDE:
         help_window.title('Help')
         help_label = tk.Label(help_window, text=help_text, justify=tk.LEFT, padx=10, pady=10)
         help_label.pack()
-        help_window.geometry('700x450')  # Adjust size as needed
+        help_window.minsize(700, 570)
 
     def load_questions_from_file(self) -> None:
         questions_file: str = filedialog.askopenfilename(
@@ -154,6 +169,17 @@ class QCMGeneratorIDE:
             include_command: str = f'\\includegraphics[width=0.5\\textwidth]{{{image_file}}}\n'
 
             self.text_area.insert(cursor_pos, include_command)
+
+    def open_subjects_folder(self) -> None:
+        path = os.path.join(os.path.dirname(__file__), 'subjects')
+        if platform.system() == 'Windows':
+            os.startfile(path)  # type: ignore[attr-defined]  # noqa: S606
+        elif platform.system() == 'Darwin':  # macOS
+            subprocess.run(['open', path], check=False)  # noqa: S607, S603
+        elif platform.system() == 'Linux':
+            subprocess.run(['xdg-open', path], check=False)  # noqa: S603, S607
+        else:
+            messagebox.showwarning('Warning', 'Unsupported operating system.')
 
 
 def reload_questions(reset: bool = True) -> None:

@@ -25,6 +25,7 @@ Clone the repository and install the required dependencies:
 ```sh
 git clone https://github.com/toby-bro/latex_QCM_generator.git
 cd latex_QCM_generator
+make install
 ```
 
 ## Usage

@@ -71,25 +71,29 @@ def write_file(file_path: str, content: str) -> None:
 
 
 def parse_questions(raw_lines: list[str]) -> tuple[list[str], list[list[str]]]:
-    i = 0
-    while raw_lines[i][0] != 'Q' and i < len(raw_lines):
-        i += 1
-
-    if i == len(raw_lines):
-        raise ValueError('Bad question typography: the line must start with "Q2."')
-
-    k = raw_lines[i].index('.') + 1
-    questions = []
+    questions: list[str] = []
     choices: list[list[str]] = []
+    current_question: str | None = None
 
-    raw_lines = [re.sub(r'(?<!\\)%', r'\%', line) for line in raw_lines]
+    raw_lines = [re.sub(r'(?<!\\)%', r'\%', line).strip() for line in raw_lines]
 
     for line in raw_lines:
         if line.startswith('Q'):
-            questions.append(line[k:].strip())
+            try:
+                current_question = line[1:].strip().split(' ', 1)[1]
+            except IndexError as e:
+                logging.error(f'Invalid question format: {line}')
+                raise ValueError(
+                    f'Invalid question format: \n{line}.\n'
+                    'Ensure questions start with "Q" followed by a space and then the title of the question.',
+                ) from e
+            questions.append(current_question)
             choices.append([])
-        elif line.strip() and questions:
-            choices[-1].append(line.strip())
+        elif current_question is not None and line:
+            choices[-1].append(line)
+
+    if not questions:
+        raise ValueError('No questions found. Ensure lines start with "Q" for questions.')
 
     return questions, choices
 
@@ -117,7 +121,7 @@ def transform_image_includes(latex_content: str) -> str:
     return re.sub(INCLUDE_PATTERN, transform_include_path, latex_content)
 
 
-def generate_qcm(questions: list[Question], num_subjects: int) -> list[list[Question]]:
+def shuffle_questions(questions: list[Question], num_subjects: int) -> list[list[Question]]:
     return [sample(questions, len(questions)) for _ in range(num_subjects)]
 
 
@@ -165,10 +169,15 @@ def generate_tex_file(latex_top: str, output_dir: str, i: int, qcm: list[Questio
     tq = f'{latex_top}\n\\textsc{{subject {i + 1}}}\n\\begin{{enumerate}}\n'
 
     for question in qcm:
-        tq += f'\n\\item {question.question}\n\\begin{{enumerate}}'
-        for k in question.possible_answers:
-            tq += f'\n\\item {k}'
-        tq += '\n\\end{enumerate}\n\\vspace{0.5cm}'
+        tq += f'\n\\item {question.question}'
+        if len(question.possible_answers) > 1:
+            tq += '\n\\begin{enumerate}'
+            for answer in question.possible_answers:
+                tq += f'\n\\item {answer}'
+            tq += '\n\\end{enumerate}'
+        else:
+            tq += f'\n \\newline{question.possible_answers[0]}\n'
+        tq += '\n\\vspace{0.5cm}'
 
     tq = transform_image_includes(tq)
 
@@ -258,9 +267,9 @@ def generate_subjects() -> None:
     question_list, possible_choices = parse_questions(raw_questions)
 
     questions = [Question(question_list[i], possible_choices[i]) for i in range(len(question_list))]
-    liste_qcm = generate_qcm(questions, num_different_subjects)
+    shuffled_questions = shuffle_questions(questions, num_different_subjects)
 
-    create_latex_files(liste_qcm, formatted_title_header)
+    create_latex_files(shuffled_questions, formatted_title_header)
 
     clean()
 

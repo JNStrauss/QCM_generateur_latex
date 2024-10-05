@@ -1,6 +1,6 @@
 import pytest
 
-from main_latex import transform_image_includes
+from qcm_generator.main_latex import transform_image_includes
 
 
 @pytest.mark.parametrize(

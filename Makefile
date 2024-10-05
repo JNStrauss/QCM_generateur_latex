@@ -1,7 +1,7 @@
 all: run
 
 BASE_DIR = qcm_generator
-OUTPUT_DIR = $(BASE_DIR)/sujets
+OUTPUT_DIR = $(BASE_DIR)/subjects
 
 run:
 	python $(BASE_DIR)/main.py

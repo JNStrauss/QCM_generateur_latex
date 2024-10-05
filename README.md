@@ -55,7 +55,7 @@ cd latex_QCM_generator
     python qcm_generator/main.py
     ```
 
-3. The generated PDF files will be located in the `sujets` directory.
+3. The generated PDF files will be located in the `subjects` directory.
 
 ## Contributing
 

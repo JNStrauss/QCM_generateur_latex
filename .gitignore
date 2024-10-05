@@ -5,5 +5,5 @@ __pycache__/
 *.bak
 *.swp
 *.log
-sujets/
+subjects/
 .pytest_cache/

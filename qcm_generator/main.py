@@ -115,7 +115,7 @@ def generate_qcm(questions: list[Question], num_subjects: int) -> list[list[Ques
 
 def clean() -> None:
     base_path = os.path.dirname(__file__)
-    full_output_dir = os.path.join(base_path, 'sujets')
+    full_output_dir = os.path.join(base_path, 'subjects')
     extensions = ['.tex', '.log', '.aux', '.out']
     aux_files_dir = os.path.join(full_output_dir, 'aux_files')
 
@@ -134,8 +134,8 @@ def clean() -> None:
 
 
 def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
-    aux_dir = path('sujets/aux_files')
-    output_dir = path('sujets')
+    aux_dir = path('subjects/aux_files')
+    output_dir = path('subjects')
 
     os.makedirs(aux_dir, exist_ok=True)
     os.makedirs(output_dir, exist_ok=True)
@@ -154,7 +154,7 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
 
         tq = transform_image_includes(tq)
 
-        sujet_path = path(f'sujets/aux_files/sujet{i + 1}.tex')
+        sujet_path = path(f'subjects/aux_files/sujet{i + 1}.tex')
         write_file(sujet_path, tq + '\n\\end{enumerate}\n\\end{document}')
 
         result = subprocess.run(  # noqa: S603

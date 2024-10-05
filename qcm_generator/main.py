@@ -144,7 +144,7 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
         for quest in qcm:
             quest.mix_answers()
 
-        tq = f'{latex_top}\n\\textsc{{Sujet {i + 1}}}\n\\begin{{enumerate}}\n'
+        tq = f'{latex_top}\n\\textsc{{subject {i + 1}}}\n\\begin{{enumerate}}\n'
 
         for question in qcm:
             tq += f'\n\\item {question.question}\n\\begin{{enumerate}}'
@@ -154,15 +154,15 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
 
         tq = transform_image_includes(tq)
 
-        sujet_path = path(f'subjects/aux_files/sujet{i + 1}.tex')
-        write_file(sujet_path, tq + '\n\\end{enumerate}\n\\end{document}')
+        subject_path = path(f'subjects/aux_files/subject{i + 1}.tex')
+        write_file(subject_path, tq + '\n\\end{enumerate}\n\\end{document}')
 
         result = subprocess.run(  # noqa: S603
             [  # noqa: S607
                 'pdflatex',
                 '-interaction=nonstopmode',
                 f'-output-directory={output_dir}',
-                sujet_path,
+                subject_path,
             ],
             capture_output=True,
             check=False,

@@ -6,4 +6,3 @@ __pycache__/
 *.swp
 *.log
 sujets/
-.pytest_cache/

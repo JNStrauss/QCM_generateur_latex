@@ -1,6 +1,6 @@
 import pytest
 
-from qcm_generator.main import transform_image_includes
+from qcm_generator.main_cli import transform_image_includes
 
 
 @pytest.mark.parametrize(
@@ -17,6 +17,14 @@ from qcm_generator.main import transform_image_includes
         (
             r'\includegraphics[width=0.3\textwidth]{/absolute/path/to/image.png}',
             r'\includegraphics[width=0.3\textwidth]{/absolute/path/to/image.png}',
+        ),
+        (
+            r'\includegraphics[width=0.5\textwidth]{C:/absolute/path/to/image.png}',
+            r'\includegraphics[width=0.5\textwidth]{C:/absolute/path/to/image.png}',
+        ),
+        (
+            r'\includegraphics[width=0.5\textwidth]{D:\\absolute\\path\\to\\image.jpg}',
+            r'\includegraphics[width=0.5\textwidth]{D:\\absolute\\path\\to\\image.jpg}',
         ),
         (
             r"""

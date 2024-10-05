@@ -1,0 +1,43 @@
+name: Lint and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: poetry lock && poetry install
+
+      - name: Run tests
+        run: poetry run pytest
+
+      - name: Check linting
+        run: |
+          poetry run ruff check qcm_generator
+          poetry run black --check qcm_generator
+
+      - name: Check types
+        run:
+          poetry run mypy qcm_generator
+

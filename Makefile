@@ -8,9 +8,11 @@ run:
 
 clean:
 	rm -rf $(OUTPUT_DIR)/*.tex $(OUTPUT_DIR)/*.log $(OUTPUT_DIR)/*.aux $(OUTPUT_DIR)/*.out $(OUTPUT_DIR)/aux_files
+	rm $(BASE_DIR)/debug.log
 
-purge:
+purge: clean
 	rm -rf $(OUTPUT_DIR)
+	rm $(BASE_DIR)/questions.txt
 
 test:
 	poetry run pytest

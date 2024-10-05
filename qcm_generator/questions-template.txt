@@ -13,4 +13,3 @@ Q2. Second question?
 Answer A
 Answer B
 Answer C
-\includegraphics[width=0.5\texedftwidth]{/home/toby/Documents/latex/beamer/sawt-safir/img/bulbul.jpeg}

@@ -97,10 +97,16 @@ def parse_questions(raw_lines: list[str]) -> tuple[list[str], list[list[str]]]:
 INCLUDE_PATTERN = r'\\includegraphics(?:\[(.*?)\])?\{([^:/].*?)\}'
 
 
-def transform_include_path(match: re.Match) -> str:
+def transform_include_path(match: re.Match[str]) -> str:
     options = match.group(1) if match.group(1) else ''
     relative_path = match.group(2)
-    new_path = f'../../{relative_path}'
+
+    # Check if the path is an absolute Windows path
+    if re.match(r'^[a-zA-Z]:(\\|/)', relative_path):
+        new_path = relative_path
+    else:
+        new_path = f'../../{relative_path}'
+
     if options:
         return f'\\includegraphics[{options}]{{{new_path}}}'
     return f'\\includegraphics{{{new_path}}}'

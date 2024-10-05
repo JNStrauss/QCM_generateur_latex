@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 
-from qcm_generator.main import generate_subjects
+from qcm_generator.main_cli import generate_subjects
 
 QUESTION_FILE = os.path.join(os.path.dirname(__file__), 'questions.txt')
 
@@ -12,34 +12,86 @@ class QCMGeneratorIDE:
         self.root: tk.Tk = root
         self.root.title('QCM Generator IDE')
 
-        # Text area for editing questions.txt
-        self.text_area: scrolledtext.ScrolledText = scrolledtext.ScrolledText(root, width=60, height=20, wrap=tk.WORD)
-        self.text_area.grid(row=0, column=0, padx=5, pady=5, columnspan=2)
+        self.root.minsize(700, 400)
 
-        # Load Questions Button
-        self.load_btn: tk.Button = tk.Button(root, text='Load Questions', command=self.load_questions_from_file)
-        self.load_btn.grid(row=1, column=0, padx=5, pady=5)
+        self.text_frame = tk.Frame(root)
+        self.text_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Save Questions Button
-        self.save_btn: tk.Button = tk.Button(root, text='Save Questions', command=self.save_questions)
-        self.save_btn.grid(row=1, column=1, padx=5, pady=5)
+        self.text_area: scrolledtext.ScrolledText = scrolledtext.ScrolledText(
+            self.text_frame,
+            width=60,
+            height=20,
+            wrap=tk.WORD,
+        )
+        self.text_area.pack(fill=tk.BOTH, expand=True)
 
-        # Generate Subjects Button
+        self.button_frame = tk.Frame(root)
+        self.button_frame.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        self.help_btn: tk.Button = tk.Button(self.button_frame, text='Help', command=self.show_help)
+        self.help_btn.pack(pady=5)
+
+        self.load_btn: tk.Button = tk.Button(
+            self.button_frame,
+            text='Load Questions',
+            command=self.load_questions_from_file,
+        )
+        self.load_btn.pack(pady=5)
+
+        self.save_btn: tk.Button = tk.Button(self.button_frame, text='Save Questions', command=self.save_questions)
+        self.save_btn.pack(pady=5)
+
+        self.reset_btn: tk.Button = tk.Button(self.button_frame, text='Reset Questions', command=self.reset_questions)
+        self.reset_btn.pack(pady=5)
+
+        self.include_image_btn: tk.Button = tk.Button(
+            self.button_frame,
+            text='Include Image',
+            command=self.include_image,
+        )
+        self.include_image_btn.pack(pady=5)
+
         self.generate_subjects_btn: tk.Button = tk.Button(
-            root,
+            self.button_frame,
             text='Generate Subjects',
             command=self.generate_subjects,
         )
-        self.generate_subjects_btn.grid(row=2, column=0, padx=5, pady=5, columnspan=2)
-
-        # Include Image Button
-        self.include_image_btn: tk.Button = tk.Button(root, text='Include Image', command=self.include_image)
-        self.include_image_btn.grid(row=3, column=0, padx=5, pady=5, columnspan=2)
+        self.generate_subjects_btn.pack(pady=5)
 
         self.load_questions(
             QUESTION_FILE,
             is_user_triggered=False,
         )  # Load the questions file by default
+
+    def reset_questions(self) -> None:
+        reload_questions()
+        self.load_questions(QUESTION_FILE, is_user_triggered=False)
+        messagebox.showinfo('Success', 'Questions reset successfully!')
+
+    def show_help(self) -> None:
+        help_text = (
+            "Welcome to the QCM Generator IDE!\n\n"
+            "Overview:\n"
+            "This application allows you to create and manage QCM (Questionnaire à Choix Multiples) documents.\n\n"
+            "Loading Questions:\n"
+            "1. Click 'Load Questions' to open your 'questions.txt' file.\n"
+            "2. Ensure the format follows: \n"
+            "   - Each question starts with 'Q' and is followed by its answers.\n\n"
+            "Saving Questions:\n"
+            "Use the 'Save Questions' button to save your changes.\n\n"
+            "Generating Subjects:\n"
+            "Click 'Generate Subjects' to create QCM documents from the loaded questions.\n\n"
+            "Including Images:\n"
+            "Use 'Include Image' to insert images into your LaTeX documents. You will be prompted to select an image file.\n\n"  # noqa: E501
+            "Contact:\n"
+            "For assistance, please reach out by creating an issue on the GitHub repository: \n"
+            "https://github.com/toby-bro/latex_QCM_generator"
+        )
+        help_window = tk.Toplevel(self.root)
+        help_window.title('Help')
+        help_label = tk.Label(help_window, text=help_text, justify=tk.LEFT, padx=10, pady=10)
+        help_label.pack()
+        help_window.geometry('700x450')  # Adjust size as needed
 
     def load_questions_from_file(self) -> None:
         questions_file: str = filedialog.askopenfilename(
@@ -52,8 +104,8 @@ class QCMGeneratorIDE:
     def load_questions(self, questions_file: str, *, is_user_triggered: bool = False) -> None:
         with open(questions_file, 'r', encoding='UTF8') as file:
             content: str = file.read()
-            self.text_area.delete(1.0, tk.END)  # Clear the text area
-            self.text_area.insert(tk.END, content)  # Insert the loaded content
+            self.text_area.delete(1.0, tk.END)
+            self.text_area.insert(tk.END, content)
 
         if is_user_triggered:
             messagebox.showinfo('Success', 'Questions loaded successfully!')
@@ -68,20 +120,21 @@ class QCMGeneratorIDE:
 
     def save_questions_to_file(self, questions_file: str, *, is_user_triggered: bool = False) -> None:
         if questions_file:
-            content: str = self.text_area.get(1.0, tk.END)  # Get all text from the text area
+            content: str = self.text_area.get(1.0, tk.END)
             with open(questions_file, 'w', encoding='UTF8') as file:
-                file.write(content.strip())  # Write content without leading/trailing whitespace
+                file.write(content.strip())
             if is_user_triggered:
                 messagebox.showinfo('Success', 'Questions saved successfully!')
 
     def generate_subjects(self) -> None:
-        # Here you would typically load the questions from the text area and call the main function.
-        # For now, let's just show a message indicating this action.
-        # messagebox.showinfo('Generate Subjects', 'This will call the generation function.')
-        # You can add the logic to parse questions from self.text_area and call qcm_generator.main() as needed.
-        self.save_questions_to_file(QUESTION_FILE)  # Save the questions before generating subjects
+        self.save_questions_to_file(QUESTION_FILE)
         try:
             generate_subjects()
+            messagebox.showinfo(
+                'Success',
+                f'Subjects generated successfully! \n'
+                f'Check the {os.path.join(os.path.dirname(__file__), "sujects")} folder to find them.',
+            )
         except Exception as e:
             messagebox.showerror('Error', f'An error occurred while generating subjects: {e}')
 
@@ -96,19 +149,34 @@ class QCMGeneratorIDE:
             ],
         )
         if image_file:
-            # Get the current cursor position
             cursor_pos: str = self.text_area.index(tk.INSERT)
 
-            # Create the LaTeX includegraphics command
             include_command: str = f'\\includegraphics[width=0.5\\textwidth]{{{image_file}}}\n'
 
-            # Insert the command at the cursor position
             self.text_area.insert(cursor_pos, include_command)
 
-            # messagebox.showinfo('Success', f"Image '{image_file}' included successfully!")
+
+def reload_questions(reset: bool = True) -> None:
+    QUESTION_TEMPLATE_FILE = os.path.join(os.path.dirname(__file__), 'questions-template.txt')
+
+    if os.path.exists(QUESTION_FILE):
+        if reset:
+            os.remove(QUESTION_FILE)
+        else:
+            return
+
+    if os.path.exists(QUESTION_TEMPLATE_FILE):
+        with open(QUESTION_TEMPLATE_FILE, 'r', encoding='UTF8') as template_file:
+            template_content = template_file.read()
+        with open(QUESTION_FILE, 'w', encoding='UTF8') as question_file:
+            question_file.write(template_content)
+    else:
+        messagebox.showerror('Error', 'Template file not found. Cannot create questions.txt.')
 
 
 if __name__ == '__main__':
+    reload_questions(False)
+
     root: tk.Tk = tk.Tk()
     app = QCMGeneratorIDE(root)
     root.mainloop()

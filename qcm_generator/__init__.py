@@ -1,1 +1,1 @@
-from qcm_generator.main import *
+from qcm_generator.main_cli import *

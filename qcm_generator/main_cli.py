@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import subprocess
+import threading
 from random import sample
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -147,23 +148,51 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
     os.makedirs(aux_dir, exist_ok=True)
     os.makedirs(output_dir, exist_ok=True)
 
+    threads = []
     for i, qcm in enumerate(liste_qcm):
-        for quest in qcm:
-            quest.mix_answers()
+        thread = threading.Thread(target=generate_tex_file, args=(latex_top, output_dir, i, qcm))
+        threads.append(thread)
+        thread.start()
 
-        tq = f'{latex_top}\n\\textsc{{subject {i + 1}}}\n\\begin{{enumerate}}\n'
+    for thread in threads:
+        thread.join()
 
-        for question in qcm:
-            tq += f'\n\\item {question.question}\n\\begin{{enumerate}}'
-            for k in question.possible_answers:
-                tq += f'\n\\item {k}'
-            tq += '\n\\end{enumerate}\n\\vspace{0.5cm}'
 
-        tq = transform_image_includes(tq)
+def generate_tex_file(latex_top: str, output_dir: str, i: int, qcm: list[Question]) -> None:
+    for quest in qcm:
+        quest.mix_answers()
 
-        subject_path = path(f'subjects/aux_files/subject{i + 1}.tex')
-        write_file(subject_path, tq + '\n\\end{enumerate}\n\\end{document}')
+    tq = f'{latex_top}\n\\textsc{{subject {i + 1}}}\n\\begin{{enumerate}}\n'
 
+    for question in qcm:
+        tq += f'\n\\item {question.question}\n\\begin{{enumerate}}'
+        for k in question.possible_answers:
+            tq += f'\n\\item {k}'
+        tq += '\n\\end{enumerate}\n\\vspace{0.5cm}'
+
+    tq = transform_image_includes(tq)
+
+    subject_path = path(f'subjects/aux_files/subject{i + 1}.tex')
+    write_file(subject_path, tq + '\n\\end{enumerate}\n\\end{document}')
+
+    compile_documents(output_dir, subject_path)
+    compile_documents(output_dir, subject_path)
+
+
+def compile_documents(output_dir: str, subject_path: str) -> None:
+    if os.name == 'nt':  # Windows
+        result = subprocess.run(  # noqa: S603
+            [  # noqa: S607
+                'pdflatex',
+                '-interaction=nonstopmode',
+                f'-output-directory={output_dir}',
+                subject_path,
+            ],
+            capture_output=True,
+            check=False,
+            creationflags=subprocess.CREATE_NO_WINDOW,  # type: ignore[attr-defined]
+        )
+    else:  # Unix-based systems
         result = subprocess.run(  # noqa: S603
             [  # noqa: S607
                 'pdflatex',
@@ -175,13 +204,13 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
             check=False,
         )
 
-        if result.returncode != 0:
-            raise_compile_error(result)
+    if result.returncode != 0:
+        raise_compile_error(result)
 
-        if result.stdout:
-            logging.debug(result.stdout)
-        if result.stderr:
-            raise_compile_error(result)
+    if result.stdout:
+        logging.debug(result.stdout)
+    if result.stderr:
+        raise_compile_error(result)
 
 
 def raise_compile_error(result: subprocess.CompletedProcess[bytes]) -> None:

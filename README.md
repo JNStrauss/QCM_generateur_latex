@@ -29,6 +29,12 @@ cd latex_QCM_generator
 
 ## Usage
 
+### From GUI
+
+Provided the required packages are installed then a double click on the `main_gui.py` should do the trick
+
+### From CLI
+
 1. Create a `questions.txt` file in the project root containing the following information:
 
     ```txt
@@ -49,10 +55,10 @@ cd latex_QCM_generator
     Answer C
     ```
 
-2. Run the Python script:
+2. Run the Python script from CLI:
 
     ```sh
-    python qcm_generator/main.py
+    python qcm_generator/main_cli.py
     ```
 
 3. The generated PDF files will be located in the `subjects` directory.

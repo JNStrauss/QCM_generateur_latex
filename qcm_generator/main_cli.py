@@ -24,6 +24,7 @@ latex_top = r"""
 \usepackage{{xcolor}}
 \usepackage{{enumitem}}
 \usepackage{{fancyhdr}}
+\usepackage{{graphicx}}
 \usepackage{{lastpage}}
 \geometry{{hmargin=3cm,vmargin=2.5cm}}
 \usepackage{{setspace}}
@@ -74,7 +75,7 @@ def parse_questions(raw_lines: list[str]) -> tuple[list[str], list[list[str]]]:
         i += 1
 
     if i == len(raw_lines):
-        raise Exception('Bad question typography: the line must start with "Q2."')
+        raise ValueError('Bad question typography: the line must start with "Q2."')
 
     k = raw_lines[i].index('.') + 1
     questions = []
@@ -169,16 +170,26 @@ def create_latex_files(liste_qcm: list[list[Question]], latex_top: str) -> None:
         )
 
         if result.returncode != 0:
-            logging.error(result.stdout)
-            return
+            raise_compile_error(result)
 
         if result.stdout:
             logging.debug(result.stdout)
         if result.stderr:
-            logging.error(result.stderr)
+            raise_compile_error(result)
 
 
-def main() -> None:
+def raise_compile_error(result: subprocess.CompletedProcess[bytes]) -> None:
+    logging.error(result.stdout)
+    log_file_path = os.path.join(script_dir, 'debug.log')
+    with open(log_file_path, 'a', encoding='UTF8') as log_file:
+        log_file.write(result.stdout.decode('utf-8'))
+        log_file.write(result.stderr.decode('utf-8'))
+    raise RuntimeError(
+        f'LaTeX compilation failed\n Check the log file at {log_file_path} for more information',
+    )
+
+
+def generate_subjects() -> None:
     raw_questions = read_file(path('questions.txt'))
 
     title = 'QCM'
@@ -220,4 +231,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    generate_subjects()

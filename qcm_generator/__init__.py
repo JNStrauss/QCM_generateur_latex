@@ -1,1 +1,1 @@
-from qcm_generator.main_latex import *
+from qcm_generator.main import *

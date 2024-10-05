@@ -52,7 +52,7 @@ cd latex_QCM_generator
 2. Run the Python script:
 
     ```sh
-    python main_latex.py
+    python qcm_generator/main.py
     ```
 
 3. The generated PDF files will be located in the `sujets` directory.
